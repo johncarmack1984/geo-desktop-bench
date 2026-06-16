@@ -5,6 +5,6 @@ set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 pnpm -C "$ROOT/site" build
-pnpm -C "$ROOT/infra" deploy
+pnpm -C "$ROOT/infra" run deploy
 
 echo "deployed → https://geobench.johncarmack.com"

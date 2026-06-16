@@ -17,8 +17,9 @@ pnpm -C infra exec cdk bootstrap aws://735853783919/us-east-1
 
 ```sh
 export AWS_PROFILE=<admin-profile>
-pnpm -C site build      # assemble report + live demos → site/dist
-pnpm -C infra deploy    # cdk deploy: provision + upload + CloudFront invalidation
+pnpm -C site build         # assemble report + live demos → site/dist
+pnpm -C infra run deploy   # cdk deploy: provision + upload + CloudFront invalidation
+                           # (use `run` — bare `pnpm deploy` hits pnpm's builtin)
 # or just: scripts/deploy.sh
 ```
 

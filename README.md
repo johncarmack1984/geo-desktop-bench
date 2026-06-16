@@ -52,5 +52,5 @@ Sample basemap data (`firenze.pmtiles`, ~6 MB Protomaps) is fetched by
 ## Deploy
 
 The report + live demos publish to `geobench.johncarmack.com` (S3 + CloudFront, AWS CDK).
-See [`infra/DEPLOY.md`](infra/DEPLOY.md): `pnpm -C site build` then `pnpm -C infra deploy`
+See [`infra/DEPLOY.md`](infra/DEPLOY.md): `pnpm -C site build` then `pnpm -C infra run deploy`
 — CDK provisions the bucket/cert/CloudFront/DNS and uploads the site via BucketDeployment.

@@ -1,0 +1,10 @@
+{
+  "name": "geobench-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Assembles the published report + live demos into site/dist for geobench.johncarmack.com.",
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}

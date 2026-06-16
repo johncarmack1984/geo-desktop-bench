@@ -1,0 +1,25 @@
+{
+  "name": "shell-bench-electron",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Electron shell (bundled Chromium + Node) around the shared frontend — mirror of the Tauri shell for a head-to-head.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:frontend": "pnpm -C ../frontend build",
+    "appdir": "pnpm build:frontend && electron-builder --dir",
+    "dist": "pnpm build:frontend && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "42.4.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "dev.shellbench.electron",
+    "productName": "shell-bench-electron",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "preload.js"],
+    "extraResources": [{ "from": "../frontend/dist", "to": "frontend" }],
+    "mac": { "target": "dir", "identity": null }
+  }
+}

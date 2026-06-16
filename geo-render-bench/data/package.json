@@ -1,0 +1,20 @@
+{
+  "name": "geo-render-bench-data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Data-path benchmarks: DuckDB-spatial query latency, PMTiles range-read decode, and a Martin (Rust) tile-server latency harness. Isolated from the web app so native deps stay out of its install.",
+  "scripts": {
+    "duckdb": "node duckdb-bench.ts",
+    "pmtiles": "node pmtiles-bench.ts",
+    "martin:latency": "node martin-latency.ts"
+  },
+  "dependencies": {
+    "@duckdb/node-api": "1.5.3-r.3",
+    "autocannon": "^8.0.0",
+    "pmtiles": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0"
+  }
+}

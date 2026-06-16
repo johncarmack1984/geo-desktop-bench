@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fastest Geospatial Desktop Stack — Benchmarks</title>
+    <meta
+      name="description"
+      content="Benchmarks for the fastest geospatial desktop stack: rendering engines (deck.gl vs MapLibre vs raw WebGL2), desktop shells (Tauri vs Electron), and the data path (DuckDB-spatial, PMTiles). Measured on an Apple M2 Max."
+    />
+    <style>
+      :root {
+        --bg: #0b1020; --panel: #11162a; --line: rgba(205, 214, 244, 0.12);
+        --fg: #cdd6f4; --dim: #7f849c; --good: #a6e3a1; --warn: #f9e2af; --bad: #f38ba8; --accent: #89b4fa;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0; background: var(--bg); color: var(--fg);
+        font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+      .wrap { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+      h1 { font-size: 30px; line-height: 1.2; margin: 0 0 6px; }
+      h2 { font-size: 21px; margin: 44px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+      h3 { font-size: 16px; margin: 22px 0 8px; }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      code, .mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.92em; }
+      .sub { color: var(--dim); margin: 0 0 22px; }
+      .verdict {
+        background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--good);
+        border-radius: 8px; padding: 16px 18px; margin: 24px 0;
+      }
+      .verdict b { color: var(--good); }
+      table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 14px; }
+      th, td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+      th:first-child, td:first-child { text-align: left; }
+      thead th { color: var(--dim); font-weight: 600; }
+      .win { color: var(--good); }
+      .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 18px 0; }
+      .card {
+        display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px; color: var(--fg);
+      }
+      .card:hover { border-color: var(--accent); text-decoration: none; }
+      .card h3 { margin: 0 0 6px; color: var(--accent); }
+      .card p { margin: 0; color: var(--dim); font-size: 13px; }
+      ul { padding-left: 20px; } li { margin: 4px 0; }
+      .note { color: var(--dim); font-size: 13px; }
+      footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Fastest Geospatial Desktop Stack</h1>
+      <p class="sub">
+        Benchmarks across the three layers of a geospatial desktop app — rendering, shell, and data
+        path — measured on an Apple M2 Max, 120 Hz. Source:
+        <a href="https://github.com/johncarmack1984/geo-desktop-bench">geo-desktop-bench</a>.
+      </p>
+
+      <div class="verdict">
+        <b>Verdict:</b> <b>Tauri + deck.gl + DuckDB/PMTiles</b> — single-file, server-less,
+        offline-capable. Tauri wins the metrics that constrain a desktop app (3.2 MB binary, ~97 MB
+        RAM) by ~86× and ~4.5× over Electron; deck.gl renders to millions of points at 120 fps;
+        DuckDB answers spatial queries in ~1.5 ms and PMTiles serves vector tiles with no server.
+      </div>
+
+      <h2>Live demos</h2>
+      <div class="demos">
+        <a class="card" href="./render/">
+          <h3>Render sweep →</h3>
+          <p>WebGL2 vs deck.gl vs MapLibre across 100k–10M points. Hit "sweep".</p>
+        </a>
+        <a class="card" href="./render/pmtiles.html">
+          <h3>PMTiles basemap →</h3>
+          <p>MapLibre streaming Firenze vector tiles by byte-range — no tile server.</p>
+        </a>
+        <a class="card" href="./capstone/">
+          <h3>Web capstone →</h3>
+          <p>DuckDB-WASM query → deck.gl, over a PMTiles basemap. The whole stack in a tab.</p>
+        </a>
+      </div>
+      <p class="note">
+        The desktop capstone (DuckDB-on-Rust in Tauri) is native — see the
+        <a href="https://github.com/johncarmack1984/geo-desktop-bench/tree/main/shell-bench">repo</a>.
+        The web capstone above is the in-browser equivalent (DuckDB-WASM).
+      </p>
+
+      <h2>Rendering — deck.gl vs MapLibre vs raw WebGL2</h2>
+      <p>Same synthetic point cloud, same deterministic camera path, frame-time percentiles (8.33 ms = a 120 Hz frame).</p>
+      <table>
+        <thead>
+          <tr><th>points</th><th>WebGL2 (raw)</th><th>deck.gl</th><th>MapLibre</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>100k</td><td>120 fps</td><td>120 fps</td><td>120 fps</td></tr>
+          <tr><td>1M</td><td>120 fps</td><td>120 fps</td><td>120 fps¹</td></tr>
+          <tr><td>3M</td><td>120 fps</td><td>105 fps</td><td>—</td></tr>
+          <tr><td>10M</td><td>97 fps</td><td>40 fps</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>At <b>≤1M points the engine doesn't matter</b> — all three pin the refresh cap.</li>
+        <li>The wall shows at 3M+: raw WebGL2 stays smooth to 10M; deck.gl's abstraction costs ~2.4× throughput at the extreme.</li>
+        <li><b>¹ MapLibre's GeoJSON path doesn't fail on FPS — it fails on load:</b> 1M points = <b>9.5 s</b> to first frame (main-thread tiling). Past ~1M, use vector tiles (the PMTiles demo), not a GeoJSON source.</li>
+        <li>Time-to-first-render: deck.gl ~33 ms flat (GPU projection) beats raw WebGL2's CPU loop (381 ms @10M).</li>
+      </ul>
+
+      <h2>Desktop shell — Tauri vs Electron</h2>
+      <table>
+        <thead><tr><th>metric</th><th>Tauri</th><th>Electron</th><th>winner</th></tr></thead>
+        <tbody>
+          <tr><td>app size</td><td class="win">3.2 MB</td><td>275 MB</td><td>Tauri ~86×</td></tr>
+          <tr><td>idle RSS</td><td class="win">~97 MB²</td><td>~438 MB</td><td>Tauri ~4.5×</td></tr>
+          <tr><td>cold start</td><td>429 ms³</td><td>259 ms³</td><td>~tie</td></tr>
+          <tr><td>IPC / call</td><td>217 µs</td><td class="win">52 µs</td><td>Electron ~4×</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li class="note">² Tauri RSS undercounts on macOS — WKWebView's WebContent is a system-hosted process outside the app tree, so the real gap is smaller (but Electron is clearly heavier).</li>
+        <li class="note">³ Different zero-points (Tauri = process entry; Electron = post-Chromium-boot), so the startup comparison isn't apples-to-apples — not a real win for either.</li>
+        <li>Embedding DuckDB takes the Tauri binary 3.2 MB → ~82 MB stripped — still far under Electron's 275 MB shell <em>before any app code</em>.</li>
+        <li>Electron's only clear edges: per-call IPC and full WebGPU (WKWebView gates it).</li>
+      </ul>
+
+      <h2>Data path — DuckDB-spatial &amp; PMTiles</h2>
+      <table>
+        <thead><tr><th>operation</th><th>latency</th></tr></thead>
+        <tbody>
+          <tr><td>DuckDB bbox · plain <code>lon/lat BETWEEN</code> (1M rows)</td><td class="win">1.5 ms</td></tr>
+          <tr><td>DuckDB bbox · <code>ST_Within</code> + R-tree</td><td>39 ms</td></tr>
+          <tr><td>DuckDB k-nearest 50 · <code>ST_Distance</code></td><td>4.7 ms</td></tr>
+          <tr><td>PMTiles <code>getZxy</code> — cold (read + decode)</td><td>0.57 ms</td></tr>
+          <tr><td>PMTiles <code>getZxy</code> — warm (cached)</td><td>0.49 ms</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>For an axis-aligned box a scalar column range beats the spatial predicate ~25× — spatial functions earn their cost on complex geometry, not rectangles.</li>
+        <li>DuckDB is embedded (Rust side of Tauri) — no network, no serialization. PMTiles is a single file, range-read off disk/CDN — no tile server.</li>
+      </ul>
+
+      <h2>Method &amp; caveats</h2>
+      <ul>
+        <li>Rendering: deterministic web-mercator camera path, warm-up discarded, frame-time percentiles (rAF is refresh-capped, so the tail — p95/p99/jank — is the signal, not mean FPS). Run in Firefox; reps=1.</li>
+        <li>Shell size: <code>tauri build</code> (release, stripped, LTO) vs <code>electron-builder --dir</code> (unsigned). RSS sampled across the process tree over 5 launches.</li>
+        <li>All numbers are one machine (M2 Max), point-in-time, and reproducible from the repo — directional, not authoritative leaderboards.</li>
+      </ul>
+
+      <footer>
+        geo-desktop-bench · Apple M2 Max · built with deck.gl, MapLibre, DuckDB, PMTiles, Tauri.
+        <a href="https://github.com/johncarmack1984/geo-desktop-bench">github.com/johncarmack1984/geo-desktop-bench</a>
+      </footer>
+    </div>
+  </body>
+</html>

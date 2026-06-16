@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>geobench · web capstone — DuckDB-WASM → deck.gl over PMTiles</title>
+    <style>
+      html, body, #map { margin: 0; height: 100%; width: 100%; }
+      #map { position: absolute; inset: 0; background: #0b1020; }
+      #panel {
+        position: absolute; top: 10px; left: 10px; z-index: 1; max-width: 62vw;
+        font: 13px ui-monospace, Menlo, monospace; color: #cdd6f4;
+        background: rgba(11, 16, 32, 0.82); padding: 10px 12px; border-radius: 8px;
+        border: 1px solid rgba(205, 214, 244, 0.12);
+        display: flex; flex-direction: column; gap: 8px;
+      }
+      #panel button {
+        font: 12px ui-monospace, Menlo, monospace; color: #cdd6f4;
+        background: #2a3050; border: 1px solid rgba(205, 214, 244, 0.2);
+        border-radius: 5px; padding: 6px 10px; cursor: pointer;
+      }
+      #panel button:disabled { opacity: 0.5; cursor: default; }
+      #hud { white-space: pre; color: #a6e3a1; }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="panel">
+      <div>web capstone · DuckDB-WASM → deck.gl over PMTiles (no server)</div>
+      <button id="run" type="button">query DuckDB-WASM (1M synth → Florence bbox)</button>
+      <div id="hud">loading basemap…</div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "geobench-web-capstone",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "In-browser capstone: DuckDB-WASM runs the spatial query, deck.gl renders the result over a MapLibre + PMTiles basemap. No server, no native code — the whole stack in a tab.",
+  "scripts": {
+    "dev": "vite --port 45175 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "biome check ."
+  },
+  "dependencies": {
+    "@deck.gl/core": "^9.3.4",
+    "@deck.gl/layers": "^9.3.4",
+    "@deck.gl/mapbox": "^9.3.4",
+    "@duckdb/duckdb-wasm": "1.33.1-dev45.0",
+    "maplibre-gl": "^5.0.0",
+    "pmtiles": "^4.4.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.16"
+  }
+}

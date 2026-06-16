@@ -1,0 +1,23 @@
+[package]
+name = "shell-bench-tauri"
+version = "0.0.0"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Embedded analytical DB on the Rust side. `bundled` compiles DuckDB from source
+# (slow build, ~tens of MB added to the binary — the cost of an in-process DB).
+duckdb = { version = "1", features = ["bundled"] }
+
+# Smallest possible release binary — this is half the point of the size metric.
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

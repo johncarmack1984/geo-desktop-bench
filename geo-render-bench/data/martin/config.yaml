@@ -1,0 +1,19 @@
+# Martin (Rust) tile server — https://maplibre.org/martin/
+# Install:  cargo install martin   (or download a release binary)
+# Run:      martin --config martin/config.yaml
+# Measure:  node ../martin-latency.ts "http://localhost:3000/<source>/{z}/{x}/{y}"
+
+listen_addresses: '0.0.0.0:3000'
+
+# Serve a single-file PMTiles archive (no database needed). Drop an archive here
+# and point `paths` at it; the source id becomes the file stem (e.g. pts.pmtiles
+# → source "pts", URL http://localhost:3000/pts/{z}/{x}/{y}).
+pmtiles:
+  paths:
+    - ./pts.pmtiles
+
+# Or serve straight from PostGIS (uncomment + set your DSN). Martin auto-discovers
+# tables/functions with a geometry column and publishes them as vector sources.
+# postgres:
+#   connection_string: 'postgresql://user:pass@localhost:5432/gis'
+#   pool_size: 20

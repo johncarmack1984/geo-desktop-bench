@@ -1,0 +1,26 @@
+{
+  "name": "geo-render-bench",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Apples-to-apples geospatial rendering benchmark: deck.gl (GPU layers) vs MapLibre GL (vector tiles) on identical synthetic datasets, with a deterministic camera path and frame-time percentiles. Vanilla TS to keep framework overhead out of the numbers.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --port 45173 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "biome check ."
+  },
+  "dependencies": {
+    "@deck.gl/core": "^9.3.4",
+    "@deck.gl/layers": "^9.3.4",
+    "@luma.gl/core": "^9.3.3",
+    "maplibre-gl": "^5.0.0",
+    "pmtiles": "^4.4.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.16"
+  }
+}

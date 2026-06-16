@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "shell-bench-tauri",
+  "version": "0.0.0",
+  "identifier": "dev.shellbench.tauri",
+  "build": {
+    "frontendDist": "../../frontend/dist",
+    "devUrl": "http://localhost:45174",
+    "beforeDevCommand": "pnpm -C ../frontend dev",
+    "beforeBuildCommand": "pnpm -C ../frontend build"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [{ "title": "shell-bench (Tauri)", "width": 1100, "height": 800 }],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "icon": ["icons/icon.png"]
+  }
+}

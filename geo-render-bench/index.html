@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>geo-render-bench</title>
+    <style>
+      html, body, #map { margin: 0; height: 100%; width: 100%; overflow: hidden; }
+      #map { background: #0b1020; position: absolute; inset: 0; }
+      .panel {
+        position: absolute; z-index: 2;
+        font: 12px ui-monospace, Menlo, monospace; color: #cdd6f4;
+        background: rgba(11, 16, 32, 0.82); padding: 10px 12px; border-radius: 8px;
+        border: 1px solid rgba(205, 214, 244, 0.12);
+      }
+      #controls { top: 10px; left: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; max-width: 70vw; }
+      #controls select, #controls input, #controls button {
+        font: 12px ui-monospace, Menlo, monospace; color: #cdd6f4;
+        background: #181c2e; border: 1px solid rgba(205, 214, 244, 0.2);
+        border-radius: 5px; padding: 4px 7px;
+      }
+      #controls button { cursor: pointer; background: #2a3050; }
+      #controls button:disabled { opacity: 0.5; cursor: default; }
+      #hud { top: 10px; right: 10px; min-width: 230px; white-space: pre; }
+      #results { bottom: 10px; left: 10px; max-height: 42vh; overflow: auto; max-width: 70vw; }
+      #results table { border-collapse: collapse; }
+      #results th, #results td { padding: 2px 8px; text-align: right; border-bottom: 1px solid rgba(205,214,244,0.1); }
+      #results th:first-child, #results td:first-child { text-align: left; }
+      .dim { color: #7f849c; }
+      .good { color: #a6e3a1; }
+      .warn { color: #f9e2af; }
+      .bad { color: #f38ba8; }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <div id="controls" class="panel">
+      <label>engine
+        <select id="engine">
+          <option value="webgl2">WebGL2 (raw)</option>
+          <option value="deckgl">deck.gl</option>
+          <option value="maplibre">MapLibre</option>
+        </select>
+      </label>
+      <label>points
+        <select id="points">
+          <option>100000</option>
+          <option selected>1000000</option>
+          <option>3000000</option>
+          <option>10000000</option>
+        </select>
+      </label>
+      <label>reps <input id="reps" type="number" min="1" max="9" value="3" style="width:42px" /></label>
+      <button id="run" type="button">run</button>
+      <button id="sweep" type="button" title="run both engines across all point counts">sweep</button>
+      <button id="download" type="button" disabled>download json</button>
+    </div>
+
+    <div id="hud" class="panel">idle — pick a config and hit run</div>
+    <div id="results" class="panel" hidden></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

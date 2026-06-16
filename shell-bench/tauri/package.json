@@ -1,0 +1,14 @@
+{
+  "name": "shell-bench-tauri",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tauri 2.x shell (Rust core + system WKWebView) around the shared frontend.",
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.2"
+  }
+}

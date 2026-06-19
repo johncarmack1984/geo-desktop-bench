@@ -34,6 +34,8 @@ jobs:
           aws-region: us-east-1
 
       - uses: pnpm/action-setup@v4
+        with:
+          version: 10 # no root package.json#packageManager here, so pin explicitly
       - uses: actions/setup-node@v4
         with:
           node-version: 22

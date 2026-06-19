@@ -1,0 +1,55 @@
+name: deploy
+
+# Continuous deployment: every push to main (a merged PR) builds the report + live
+# demos and runs `cdk deploy`, which uploads site/dist and invalidates CloudFront.
+# Auth is GitHub OIDC — no long-lived AWS keys. The job self-skips until the deploy
+# role is wired up (repo variable AWS_DEPLOY_ROLE_ARN), so a fresh clone's main stays
+# green. See infra/DEPLOY.md.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write # mint the OIDC token assumed by AWS
+  contents: read
+
+# Never run two deploys at once; let an in-flight cdk deploy finish.
+concurrency:
+  group: geobench-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Only when the deploy role is configured (skipped, not failed, otherwise).
+    if: ${{ vars.AWS_DEPLOY_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (GitHub OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The ~6 MB Firenze basemap is kept out of git; fetch it so it lands in site/dist.
+      - name: Fetch sample data
+        run: sh scripts/fetch-sample-data.sh
+
+      - name: Install
+        run: |
+          pnpm -C geo-render-bench install --frozen-lockfile
+          pnpm -C web-capstone install --frozen-lockfile
+          pnpm -C infra install --frozen-lockfile
+
+      - name: Build site (report + live demos)
+        run: pnpm -C site build
+
+      - name: Deploy (cdk → S3 + CloudFront invalidation)
+        run: pnpm -C infra run deploy

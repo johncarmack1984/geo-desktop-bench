@@ -107,6 +107,31 @@
         <li>Time-to-first-render: deck.gl ~33 ms flat (GPU projection) beats raw WebGL2's CPU loop (381 ms @10M).</li>
       </ul>
 
+      <h2>Native render — maplibre-rs (wgpu → Metal), no webview</h2>
+      <p>
+        Every engine above draws <em>inside</em> the webview's WebGL2 context.
+        <a href="https://github.com/maplibre/maplibre-rs">maplibre-rs</a> is the other corner of the
+        design space: a Rust vector-tile renderer that goes straight to Metal through wgpu — no
+        webview, so the WKWebView WebGPU gate that limits a Tauri app simply doesn't apply. Same
+        <code>firenze.pmtiles</code> basemap as the PMTiles demo, driven by a deterministic camera
+        path (rotate + tilt over the resident tile), rendered offscreen on the M2 Max.
+      </p>
+      <table>
+        <thead>
+          <tr><th>basemap render</th><th>p50</th><th>p95</th><th>p99</th><th>jank</th><th>vsync cap</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>maplibre-rs — native wgpu / Metal</td><td class="win">1.66 ms</td><td>1.87 ms</td><td>2.94 ms</td><td class="win">0%</td><td class="win">none</td></tr>
+          <tr><td>MapLibre GL JS — in webview (WebGL2)⁴</td><td>—</td><td>—</td><td>—</td><td>—</td><td>8.33 ms</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><b>Native draws the basemap in ~1.7 ms with zero jank, uncapped</b> — ~5× under the 8.33 ms frame a webview engine can never beat. Both look smooth at 120 Hz; the difference is GPU headroom, not wall-clock fps.</li>
+        <li>This is the answer to the shell section's asterisk below: render in native Rust and the WKWebView WebGPU gate stops mattering — no need for Chromium to get GPU headroom, so Tauri keeps its 86× size win <em>and</em> its rendering ceiling.</li>
+        <li class="note">⁴ The in-webview MapLibre basemap pins the 120 Hz refresh cap (rAF is vsync-locked), so its frame floor is 8.33 ms — it wasn't separately percentile-profiled here; the honest comparison is headroom under that floor, not who's faster on the clock.</li>
+        <li class="note">Caveats: <b>render-stage</b> frame time with the tile resident (uploaded once, then the camera moves) — <em>not</em> a streamed multi-tile fly-over. maplibre-rs is experimental — fill + line only, no labels (fine here, the Firenze style is label-free) — and has no PMTiles reader, so tiles were bridged through a local <code>martin</code> server. Basemap-vs-basemap; not comparable to the point-cloud table above.</li>
+      </ul>
+
       <h2>Desktop shell — Tauri vs Electron</h2>
       <table>
         <thead><tr><th>metric</th><th>Tauri</th><th>Electron</th><th>winner</th></tr></thead>

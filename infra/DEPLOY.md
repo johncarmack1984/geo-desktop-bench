@@ -28,6 +28,21 @@ pnpm -C infra run deploy   # cdk deploy: provision + upload + CloudFront invalid
 CloudFront). A CloudFront Function rewrites `/render/` and `/capstone/` to their
 `index.html` (OAC S3 origins are REST endpoints — no website index resolution).
 
+## Continuous deployment
+
+`.github/workflows/deploy.yml` runs the steps above on every push to `main` (a merged
+PR) via **GitHub OIDC** — no long-lived keys. It self-skips until the deploy role is
+wired up, so set a repo variable pointing at an IAM role this repo can assume:
+
+```sh
+gh variable set AWS_DEPLOY_ROLE_ARN --body 'arn:aws:iam::735853783919:role/<geobench-deploy-role>'
+```
+
+The role needs the GitHub OIDC provider as a trusted principal (scoped to
+`repo:johncarmack1984/geo-desktop-bench:*`) and permissions to run the CDK stack
+(CloudFormation + the S3/CloudFront/ACM/Route53 resources it manages). Until the
+variable is set, the workflow skips and you deploy locally with the steps above.
+
 ## Notes
 
 - `firenze.pmtiles` (~6 MB) is part of `site/dist` and lands at the bucket root, where

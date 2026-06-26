@@ -1,7 +1,7 @@
 # geo-desktop-bench
 
-Benchmarks for the **fastest geospatial desktop stack** — rendering engines, desktop
-shells, and the data path — measured on an Apple M2 Max, with a live report and demos at
+Benchmarks for the **fastest geospatial desktop stack** (rendering engines, desktop
+shells, and the data path), measured on an Apple M2 Max, with a live report and demos at
 **[geobench.johncarmack.com](https://geobench.johncarmack.com)**.
 
 Sits alongside [`stormdeck`](https://github.com/johncarmack1984/stormdeck) (deck.gl + martin)
@@ -13,11 +13,11 @@ same geo/Tauri/deck.gl line of work.
 | question | answer |
 |---|---|
 | **Render engine** | ≤1M points: deck.gl = WebGL2 = MapLibre, all 120 fps. @10M: WebGL2-raw ~97 fps, deck.gl ~40 fps, MapLibre dies on load (9.5 s ttfr @1M GeoJSON). |
-| **Native render** | maplibre-rs (wgpu→Metal, **no webview**) draws the Firenze basemap at **p50 1.7 ms, uncapped, 0 jank** — ~5× under the 8.33 ms cap a webview engine can't beat. Sidesteps the WKWebView WebGPU gate. Experimental: fill+line only, bridged via martin. |
+| **Native render** | maplibre-rs (wgpu→Metal, **no webview**) draws the Firenze basemap at **p50 1.66 ms, uncapped, 0 jank**, ~5× under the 8.33 ms cap a webview engine can't beat. Sidesteps the WKWebView WebGPU gate. Experimental: fill+line only, bridged via martin. |
 | **Desktop shell** | Tauri **3.2 MB** / ~97 MB RSS vs Electron **275 MB** / ~438 MB. Electron wins per-call IPC (52 µs vs 217 µs). |
 | **Data path** | DuckDB-spatial bbox **1.5 ms** (plain) / 39 ms (`ST_Within`) over 1M; PMTiles **0.57 ms/tile** cold, server-less. |
 
-**Verdict:** Tauri + deck.gl + DuckDB/PMTiles — single-file, server-less, offline-capable.
+**Verdict:** Tauri + deck.gl + DuckDB/PMTiles. Single-file, server-less, offline-capable.
 
 ## Layout
 
@@ -53,5 +53,5 @@ Sample basemap data (`firenze.pmtiles`, ~6 MB Protomaps) is fetched by
 ## Deploy
 
 The report + live demos publish to `geobench.johncarmack.com` (S3 + CloudFront, AWS CDK).
-See [`infra/DEPLOY.md`](infra/DEPLOY.md): `pnpm -C site build` then `pnpm -C infra run deploy`
-— CDK provisions the bucket/cert/CloudFront/DNS and uploads the site via BucketDeployment.
+See [`infra/DEPLOY.md`](infra/DEPLOY.md): `pnpm -C site build` then `pnpm -C infra run deploy`.
+CDK provisions the bucket/cert/CloudFront/DNS and uploads the site via BucketDeployment.

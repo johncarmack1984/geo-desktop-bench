@@ -38,7 +38,7 @@ jobs:
           version: 10 # no root package.json#packageManager here, so pin explicitly
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 'lts/*'
 
       # The ~6 MB Firenze basemap is kept out of git; fetch it so it lands in site/dist.
       - name: Fetch sample data

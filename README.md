@@ -1,12 +1,8 @@
 # geo-desktop-bench
 
-Benchmarks for the **fastest geospatial desktop stack** (rendering engines, desktop
-shells, and the data path), measured on an Apple M2 Max, with a live report and demos at
-**[geobench.johncarmack.com](https://geobench.johncarmack.com)**.
+Benchmarks for the fastest geospatial desktop stack (rendering engines, desktop shells, and the data path), measured on an Apple M2 Max, with a live report and demos at [geobench.johncarmack.com](https://geobench.johncarmack.com).
 
-Sits alongside [`stormdeck`](https://github.com/johncarmack1984/stormdeck) (deck.gl + martin)
-and [`tauri-offline-maps`](https://github.com/johncarmack1984/tauri-offline-maps) in the
-same geo/Tauri/deck.gl line of work.
+Sits alongside [`stormdeck`](https://github.com/johncarmack1984/stormdeck) (deck.gl + martin) in the same geo/Tauri/deck.gl line of work.
 
 ## Headline results
 

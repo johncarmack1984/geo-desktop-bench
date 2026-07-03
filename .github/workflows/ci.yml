@@ -1,0 +1,33 @@
+name: ci
+
+# PR gate: typecheck the CDK infra, so an infra type error can't merge (merging
+# main redeploys). The report/render site build is validated at deploy — it needs
+# sample data + a geo-render-bench build, too heavy to re-run per PR. Holds no AWS
+# creds and does not deploy — deploy stays in deploy.yml.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: geobench-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10 # matches deploy.yml (no root packageManager pin)
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+      - run: pnpm -C infra install --frozen-lockfile
+      - run: pnpm -C infra run typecheck

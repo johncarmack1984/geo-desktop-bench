@@ -1,8 +1,9 @@
 name: ci
 
-# PR gate: typecheck the CDK infra and build the report site, so a change that
-# breaks either can't merge (merging main rebuilds + redeploys the site). Holds
-# no AWS creds and does not deploy — deploy stays in deploy.yml.
+# PR gate: typecheck the CDK infra, so an infra type error can't merge (merging
+# main redeploys). The report/render site build is validated at deploy — it needs
+# sample data + a geo-render-bench build, too heavy to re-run per PR. Holds no AWS
+# creds and does not deploy — deploy stays in deploy.yml.
 
 on:
   pull_request:
@@ -30,4 +31,3 @@ jobs:
           node-version: 'lts/*'
       - run: pnpm -C infra install --frozen-lockfile
       - run: pnpm -C infra run typecheck
-      - run: pnpm -C site build

@@ -31,9 +31,11 @@ export class GeobenchCiStack extends cdk.Stack {
       description: 'GitHub Actions OIDC deploy role for geobench.johncarmack.com.',
       maxSessionDuration: cdk.Duration.hours(1),
       assumedBy: new iam.OpenIdConnectPrincipal(provider, {
-        StringEquals: { [`${GH}:aud`]: 'sts.amazonaws.com' },
-        // Only this repo's workflows (any branch/tag/PR) may assume the role.
-        StringLike: { [`${GH}:sub`]: `repo:${GITHUB_REPO}:*` },
+        StringEquals: {
+          [`${GH}:aud`]: 'sts.amazonaws.com',
+          // Only this repo's workflows on the main branch may assume the role.
+          [`${GH}:sub`]: `repo:${GITHUB_REPO}:ref:refs/heads/main`,
+        },
       }),
     });
 

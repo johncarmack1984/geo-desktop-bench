@@ -10,11 +10,12 @@ new GeobenchStack(app, 'GeobenchStack', {
   env: { account: '735853783919', region: 'us-east-1' },
 });
 
-// GitHub Actions CI deploy role (OIDC). Synthesized ONLY when explicitly targeting it
-// (GEOBENCH_CI_DEPLOY=1), so the routine `cdk deploy` never touches it. Deploy once
-// with admin creds, then set the printed ARN as the repo variable AWS_DEPLOY_ROLE_ARN.
-if (process.env.GEOBENCH_CI_DEPLOY === '1') {
-  new GeobenchCiStack(app, 'GeobenchCiStack', {
-    env: { account: '735853783919', region: 'us-east-1' },
-  });
-}
+// GitHub Actions CI deploy role (OIDC). Deployed by the routine `cdk deploy --all`
+// (deploy.yml) alongside the site, so the role definition — including its
+// main-pinned trust — stays in sync from CI with no local command. The CI deploy
+// role updates its own stack through the CDK bootstrap roles; the initial create
+// was a one-time admin `cdk deploy GeobenchCiStack`. The printed ARN is set as the
+// repo variable AWS_DEPLOY_ROLE_ARN.
+new GeobenchCiStack(app, 'GeobenchCiStack', {
+  env: { account: '735853783919', region: 'us-east-1' },
+});

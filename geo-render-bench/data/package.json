@@ -10,11 +10,11 @@
     "martin:latency": "node martin-latency.ts"
   },
   "dependencies": {
-    "@duckdb/node-api": "1.5.3-r.3",
+    "@duckdb/node-api": "1.5.4-r.1",
     "autocannon": "^8.0.0",
     "pmtiles": "^4.4.1"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0"
+    "@types/node": "^26.1.0"
   }
 }

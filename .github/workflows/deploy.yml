@@ -1,13 +1,22 @@
 name: deploy
 
-# Continuous deployment: every push to main (a merged PR) builds the report + live
-# demos and runs `cdk deploy`, which uploads site/dist and invalidates CloudFront.
-# Auth is GitHub OIDC — no long-lived AWS keys. The job self-skips until the deploy
-# role is wired up (repo variable AWS_DEPLOY_ROLE_ARN), so a fresh clone's main stays
-# green. See infra/DEPLOY.md.
+# Continuous deployment: a push to main that changes deployable content builds the
+# report + live demos and runs `cdk deploy`, which uploads site/dist and invalidates
+# CloudFront. Workflow- and docs-only pushes (e.g. Dependabot action bumps) are skipped
+# via paths-ignore — trigger the manual "Run workflow" (workflow_dispatch) to force a
+# deploy. Auth is GitHub OIDC — no long-lived AWS keys. The job self-skips until the
+# deploy role is wired up (repo variable AWS_DEPLOY_ROLE_ARN), so a fresh clone's main
+# stays green. See infra/DEPLOY.md.
 on:
   push:
     branches: [main]
+    # A pure workflow/docs change (Dependabot bumps, README edits) must not redeploy the
+    # live site; anything under a deployable path still does. Force via workflow_dispatch.
+    paths-ignore:
+      - '.github/**'
+      - '**/*.md'
+      - '.gitignore'
+      - '**/.gitignore'
   workflow_dispatch:
 
 permissions:

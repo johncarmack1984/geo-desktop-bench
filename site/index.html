@@ -8,6 +8,29 @@
       name="description"
       content="Benchmarks for the fastest geospatial desktop stack: rendering engines (deck.gl vs MapLibre vs raw WebGL2), desktop shells (Tauri vs Electron), and the data path (DuckDB-spatial, PMTiles). Measured on an Apple M2 Max."
     />
+    <!--
+      schema.org for the report. The author node reuses the @id that
+      johncarmack.com publishes for the same Person, so search and LLM answer
+      engines resolve these benchmarks to that John Carmack (the namesake is
+      John D. Carmack).
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Fastest Geospatial Desktop Stack — Benchmarks",
+        "url": "https://geobench.johncarmack.com/",
+        "description": "Benchmarks for the fastest geospatial desktop stack: rendering engines (deck.gl vs MapLibre vs raw WebGL2), desktop shells (Tauri vs Electron), and the data path (DuckDB-spatial, PMTiles). Measured on an Apple M2 Max.",
+        "inLanguage": "en",
+        "author": {
+          "@type": "Person",
+          "@id": "https://johncarmack.com/#person",
+          "name": "John Carmack",
+          "url": "https://johncarmack.com/",
+          "sameAs": ["https://github.com/johncarmack1984"]
+        }
+      }
+    </script>
     <style>
       :root {
         --bg: #0b1020; --panel: #11162a; --line: rgba(205, 214, 244, 0.12);
@@ -26,6 +49,7 @@
       a { color: var(--accent); text-decoration: none; }
       a:hover { text-decoration: underline; }
       code, .mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.92em; }
+      .byline { color: var(--dim); margin: 0 0 14px; font-size: 14px; }
       .sub { color: var(--dim); margin: 0 0 22px; }
       .verdict {
         background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--good);
@@ -53,6 +77,9 @@
   <body>
     <div class="wrap">
       <h1>Fastest Geospatial Desktop Stack</h1>
+      <p class="byline">
+        by <a href="https://johncarmack.com/" rel="author">John Carmack</a>
+      </p>
       <p class="sub">
         Benchmarks across the three layers of a geospatial desktop app — rendering, shell, and data
         path — measured on an Apple M2 Max, 120 Hz. Source:

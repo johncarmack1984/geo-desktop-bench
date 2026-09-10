@@ -1,5 +1,6 @@
-import maplibregl, {
+import {
   type GeoJSONSource,
+  Map as MapLibreMap,
   type StyleSpecification,
 } from 'maplibre-gl';
 import type { ViewState } from '../bench/camera';
@@ -19,10 +20,10 @@ const STYLE: StyleSpecification = {
 
 export class MapLibreEngine implements Engine {
   readonly name = 'MapLibre';
-  private map: maplibregl.Map | null = null;
+  private map: MapLibreMap | null = null;
 
   mount(container: HTMLElement, initial: ViewState): Promise<void> {
-    const map = new maplibregl.Map({
+    const map = new MapLibreMap({
       container,
       style: STYLE,
       center: [initial.longitude, initial.latitude],

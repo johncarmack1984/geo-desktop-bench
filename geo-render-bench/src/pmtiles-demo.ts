@@ -1,4 +1,8 @@
-import maplibregl, { type StyleSpecification } from 'maplibre-gl';
+import {
+  addProtocol,
+  Map as MapLibreMap,
+  type StyleSpecification,
+} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
@@ -6,7 +10,7 @@ import { Protocol } from 'pmtiles';
 // straight from the single-file archive — no tile server. THIS is the right way
 // to feed MapLibre at scale, vs the GeoJSON source that stalls past ~1M features.
 const protocol = new Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
+addProtocol('pmtiles', protocol.tile);
 
 // Dark theme over the Protomaps v4 layers present in the Firenze archive. No
 // glyphs → no labels, but fully offline (labels would need bundled fonts).
@@ -62,7 +66,7 @@ const style: StyleSpecification = {
   ],
 };
 
-const map = new maplibregl.Map({
+const map = new MapLibreMap({
   container: 'map',
   style,
   center: [11.2558, 43.7696], // Florence

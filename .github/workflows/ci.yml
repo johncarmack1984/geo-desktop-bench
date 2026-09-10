@@ -1,9 +1,10 @@
 name: ci
 
-# PR gate: typecheck the CDK infra, so an infra type error can't merge (merging
-# main redeploys). The report/render site build is validated at deploy — it needs
-# sample data + a geo-render-bench build, too heavy to re-run per PR. Holds no AWS
-# creds and does not deploy — deploy stays in deploy.yml.
+# PR gate: typecheck the CDK infra and the three TypeScript frontends, so a type
+# error (including a breaking dependency bump) can't merge — merging main redeploys.
+# The full site build is validated at deploy: it needs sample data and a Vite build,
+# too heavy to re-run per PR. Holds no AWS creds and does not deploy — deploy stays
+# in deploy.yml.
 
 on:
   pull_request:
@@ -29,5 +30,15 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 'lts/*'
-      - run: pnpm -C infra install --frozen-lockfile
-      - run: pnpm -C infra run typecheck
+      - name: Install
+        run: |
+          pnpm -C infra install --frozen-lockfile
+          pnpm -C geo-render-bench install --frozen-lockfile
+          pnpm -C web-capstone install --frozen-lockfile
+          pnpm -C shell-bench/frontend install --frozen-lockfile
+      - name: Typecheck
+        run: |
+          pnpm -C infra run typecheck
+          pnpm -C geo-render-bench exec tsc --noEmit
+          pnpm -C web-capstone exec tsc --noEmit
+          pnpm -C shell-bench/frontend exec tsc --noEmit

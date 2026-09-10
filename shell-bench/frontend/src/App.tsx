@@ -1,6 +1,11 @@
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import maplibregl, { type StyleSpecification } from 'maplibre-gl';
+import {
+  addProtocol,
+  type IControl,
+  Map as MapLibreMap,
+  type StyleSpecification,
+} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 import { useEffect, useRef, useState } from 'react';
@@ -8,7 +13,7 @@ import { bridge, type Pt } from './bridge';
 
 // Stream the PMTiles vector basemap by byte-range — no tile server.
 const protocol = new Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
+addProtocol('pmtiles', protocol.tile);
 
 // Firenze basemap (Protomaps v4 layers), dark, no labels (fully offline).
 const STYLE: StyleSpecification = {
@@ -80,7 +85,7 @@ export function App() {
   useEffect(() => {
     const el = mapRef.current;
     if (!el) return;
-    const map = new maplibregl.Map({
+    const map = new MapLibreMap({
       container: el,
       style: STYLE,
       center: [11.2558, 43.7696], // Florence
@@ -91,7 +96,7 @@ export function App() {
     const overlay = new MapboxOverlay({ interleaved: false, layers: [] });
     // deck.gl's MapboxOverlay is typed against mapbox-gl's IControl; MapLibre's is
     // structurally compatible.
-    map.addControl(overlay as unknown as maplibregl.IControl);
+    map.addControl(overlay as unknown as IControl);
     overlayRef.current = overlay;
     map.on('load', () => {
       requestAnimationFrame(() => bridge.reportReady());

@@ -1,14 +1,19 @@
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import * as duckdb from '@duckdb/duckdb-wasm';
-import maplibregl, { type StyleSpecification } from 'maplibre-gl';
+import {
+  addProtocol,
+  type IControl,
+  Map as MapLibreMap,
+  type StyleSpecification,
+} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Protocol } from 'pmtiles';
 
 // Same Firenze PMTiles basemap as the desktop capstone — streamed by byte-range,
 // no tile server.
 const protocol = new Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
+addProtocol('pmtiles', protocol.tile);
 
 const STYLE: StyleSpecification = {
   version: 8,
@@ -67,7 +72,7 @@ interface Pt {
 const hud = document.getElementById('hud') as HTMLElement;
 const btn = document.getElementById('run') as HTMLButtonElement;
 
-const map = new maplibregl.Map({
+const map = new MapLibreMap({
   container: 'map',
   style: STYLE,
   center: [11.2558, 43.7696], // Florence
@@ -76,7 +81,7 @@ const map = new maplibregl.Map({
   attributionControl: false,
 });
 const overlay = new MapboxOverlay({ interleaved: false, layers: [] });
-map.addControl(overlay as unknown as maplibregl.IControl);
+map.addControl(overlay as unknown as IControl);
 
 // Load the DuckDB-WASM CDN bundle; wrap the cross-origin worker in a blob URL.
 async function initDuckDB(): Promise<duckdb.AsyncDuckDBConnection> {

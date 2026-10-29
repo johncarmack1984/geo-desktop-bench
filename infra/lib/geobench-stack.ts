@@ -65,6 +65,12 @@ function handler(event) {
           { function: indexRewrite, eventType: cloudfront.FunctionEventType.VIEWER_REQUEST },
         ],
       },
+      // Real 404s. Behind OAC, S3 answers 403 for a missing key (no ListBucket), so
+      // both codes become a 404 served from site/404.html instead of S3's XML error.
+      errorResponses: [
+        { httpStatus: 403, responseHttpStatus: 404, responsePagePath: '/404.html' },
+        { httpStatus: 404, responseHttpStatus: 404, responsePagePath: '/404.html' },
+      ],
     });
 
     new route53.ARecord(this, 'AliasA', {

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://geobench.johncarmack.com/sitemap.xml

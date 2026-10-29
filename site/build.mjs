@@ -14,6 +14,11 @@ rmSync('dist', { recursive: true, force: true });
 mkdirSync('dist', { recursive: true });
 
 cpSync('index.html', 'dist/index.html'); // the report
+// For crawlers: the sitemap lists only the report (the demos are noindex), and
+// CloudFront serves 404.html for any missing key (infra/lib/geobench-stack.ts).
+cpSync('robots.txt', 'dist/robots.txt');
+cpSync('sitemap.xml', 'dist/sitemap.xml');
+cpSync('404.html', 'dist/404.html');
 cpSync('../geo-render-bench/dist', 'dist/render', { recursive: true }); // /render/ + /render/pmtiles.html
 cpSync('../web-capstone/dist', 'dist/capstone', { recursive: true }); // /capstone/
 
